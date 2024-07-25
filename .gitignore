@@ -1,1 +1,3 @@
 .vscode/settings.json
+api/.env
+api/package-lock.json

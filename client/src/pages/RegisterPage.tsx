@@ -9,7 +9,11 @@ export default function RegisterPage() {
 
   function registerUser(event: React.FormEvent) {
     event.preventDefault()
-    axios.get('http://localhost:4000/test')
+    axios.post('/register', {
+      name,
+      email,
+      password,
+    })
   }
 
   return (
