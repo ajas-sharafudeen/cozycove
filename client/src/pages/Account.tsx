@@ -8,7 +8,7 @@ export default function AccountPage() {
   const [redirect, setRedirect] = useState(null)
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
-  const { ready, user } = useContext(UserContext)
+  const { ready, user, setUser} = useContext(UserContext)
 
   // eslint-disable-next-line react-hooks/rules-of-hooks
   let { subpage } = useParams()
@@ -19,13 +19,14 @@ export default function AccountPage() {
   async function logout() {
     await axios.post('/logout')
     setRedirect('/')
+    setUser(null)
   }
 
   if (!ready) {
     return 'Loading...'
   }
 
-  if (ready && !user) {
+  if (ready && !user && !redirect) {
     return <Navigate to={'/login'} />
   }
 
