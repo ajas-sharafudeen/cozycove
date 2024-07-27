@@ -1,6 +1,5 @@
-/* original code - video part 1:30:30*/
-
-import { createContext, useState } from "react";
+import axios from "axios";
+import { createContext, useEffect, useState } from "react";
 
 export const UserContext = createContext({})
 
@@ -8,24 +7,14 @@ export const UserContext = createContext({})
 // @ts-ignore
 export function UserContextProvider({ children }) {
   const [user,setUser] = useState(null)
+  useEffect(() => {
+    if(!user) {
+      axios.get('/profile')
+    }
+  }, [])
   return (
     <UserContext.Provider value={{user,setUser}}>
       { children }
     </UserContext.Provider>
   )
 }
-
-// chatgpt code
-// import { createContext, ReactNode } from "react";
-
-// export const UserContext = createContext({})
-
-// interface UserContextProviderProps {
-//   children: ReactNode;
-// }
-
-// export function UserContextProvider({ children }: UserContextProviderProps) {
-//   return (
-//     { children }
-//   )
-// }
