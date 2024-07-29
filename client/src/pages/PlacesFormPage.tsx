@@ -3,6 +3,7 @@ import PhotosUploader from "../PhotosUploader"
 import Perks from "../Perks"
 import AccountNav from "../AccountNav"
 import axios from "axios"
+import { Navigate } from "react-router"
 
 export default function PlacesFormPage() {
   const [title, setTitle] = useState('')
@@ -14,6 +15,7 @@ export default function PlacesFormPage() {
   const [checkIn, setCheckIn] = useState('')
   const [checkOut, setCheckOut] = useState('')
   const [maxGuests, setMaxGuests] = useState(1)
+  const [redirect, setRedirect] = useState(false)
 
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
@@ -48,6 +50,11 @@ export default function PlacesFormPage() {
       perks, extraInfo, checkIn,
       checkOut, maxGuests
     })
+    setRedirect(true)
+  }
+
+  if (redirect) {
+    return <Navigate to={'/account/places'} />
   }
 
   return (
