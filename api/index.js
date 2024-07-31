@@ -137,4 +137,8 @@ app.get('/places/:id', async (req, res) => {
   res.json(await Place.findById(id))
 })
 
+app.put('/places/:id', async (req, res) => {
+
+})
+
 app.listen(4000)
