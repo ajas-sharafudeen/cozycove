@@ -1,7 +1,6 @@
 import { useContext, useState } from "react"
 import { UserContext } from "../UserContext"
 import { Navigate, useParams } from "react-router"
-import { Link } from "react-router-dom"
 import axios from "axios"
 import PlacesPage from "./PlacesPage"
 import AccountNav from "../AccountNav"
@@ -32,8 +31,6 @@ export default function ProfilePage() {
     return <Navigate to={'/login'} />
   }
 
-  
-
   if (redirect) {
     return <Navigate to={redirect} />
   }
@@ -41,9 +38,9 @@ export default function ProfilePage() {
     <div>
       <AccountNav />
       {subpage === 'profile' && (
-        <div className="text-center max-w-lg mx-auto">
+        <div className="text-center text-white max-w-lg mx-auto">
           Logged in as {user.name} ({user.email})<br />
-          <button onClick={logout} className="primary max-w-sm mt-2">Logout</button>
+          <button onClick={logout} className="primary max-w-sm mt-2">Log Out</button>
         </div>
       )}
       {subpage === 'places' && (

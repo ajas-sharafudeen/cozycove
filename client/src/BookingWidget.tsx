@@ -40,7 +40,7 @@ export default function BookingWidget({ place }) {
   }
 
   return (
-    <div className="bg-white shadow p-4 rounded-2xl">
+    <div className="bg-white text-black shadow p-4 rounded-2xl">
       <div className="text-2xl text-center">
         Price: &#8377; {place.price} / per night
       </div>
@@ -81,7 +81,7 @@ export default function BookingWidget({ place }) {
         </div>
       </div>
       <button onClick={bookThisPlace} className="primary mt-4">
-        Book this place
+        Book Now
         {numberOfNights > 0 && (
           <>
             <span> &#8377;{numberOfNights * place.price}</span>
