@@ -24,7 +24,8 @@ export default function RegisterPage() {
   return (
     <div className="mt-4 grow flex items-center justify-around">
       <div className="mb-64 p-16 border rounded-xl bg-white">
-        <h1 className="text-4xl text-center mb-4">Register</h1>
+        <h1 className="text-4xl text-center mb-4">Registration Form</h1>
+        <h2 className="text-sm text-center mb-2">Please fill in this form to create an account.</h2>
         <form className="max-w-md mx-auto" onSubmit={registerUser}>
           <input type="text"
             placeholder="full name"
@@ -38,9 +39,9 @@ export default function RegisterPage() {
             placeholder="password"
             value={password}
             onChange={e => setPassword(e.target.value)} />
-          <button className="primary">Register</button>
+          <button className="primary font-bold">Register</button>
           <div className="text-center py-2 text-gray-500">
-            Already a member? <Link className=" text-green-500" to={'/login'}>Login</Link>
+            Already a member? <Link className=" text-green-500 font-bold" to={'/login'}>Login</Link>
           </div>
         </form>
       </div>
