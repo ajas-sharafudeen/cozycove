@@ -37,10 +37,12 @@ function getUserDataFromReq(req) {
 }
 
 app.get('/test', (req, res) => {
-  res.json('test successful!');
+  mongoose.connect(process.env.MONGO_URL);
+  res.json('test successful');
 });
 
 app.post('/register', async (req, res) => {
+  mongoose.connect(process.env.MONGO_URL);
   const { name, email, password } = req.body;
   try {
     const userDoc = await User.create({
