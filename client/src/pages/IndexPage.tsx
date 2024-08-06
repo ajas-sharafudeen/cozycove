@@ -1,21 +1,32 @@
-import axios from "axios"
-import { useEffect, useState } from "react"
-import { Link } from "react-router-dom"
+import axios from "axios";
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+
+// Define types for Place
+interface Place {
+  _id: string;
+  photos: string[];
+  address: string;
+  title: string;
+  price: number;
+}
 
 export default function IndexPage() {
-  const [places, setPlaces] = useState([])
+  const [places, setPlaces] = useState<Place[]>([]);
+
   useEffect(() => {
     axios.get('/places').then(response => {
-      setPlaces(response.data)
-    })
-  }, [])
+      setPlaces(response.data);
+    });
+  }, []);
+
   return (
     <div className="text-white mt-8 grid gap-x-6 gap-y-8 grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
       {places.length > 0 && places.map(place => (
-        <Link to={'/place/' + place._id}>
+        <Link to={`/place/${place._id}`} key={place._id}>
           <div className="bg-gray-500 mb-2 rounded-2xl flex">
             {place.photos?.[0] && (
-              <img className="rounded-2xl object-cover aspect-square" src={'http://localhost:4000/uploads/' + place.photos?.[0]} alt="" />
+              <img className="rounded-2xl object-cover aspect-square" src={'http://localhost:4000/uploads/' + place.photos?.[0]} alt={place.title} />
             )}
           </div>
           <h2 className="font-bold">{place.address}</h2>
@@ -26,5 +37,5 @@ export default function IndexPage() {
         </Link>
       ))}
     </div>
-  )
+  );
 }

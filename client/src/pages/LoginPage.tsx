@@ -1,29 +1,36 @@
 import axios from "axios";
 import { Link, Navigate } from "react-router-dom";
 import { useContext, useState } from "react";
-import { UserContext } from "../UserContext";
+import { UserContext, UserContextType } from "../UserContext";
 
 export default function LoginPage() {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [redirect, setRedirect] = useState(false)
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  const { setUser } = useContext(UserContext)
-  async function handleLoginSubmit(ev: { preventDefault: () => void; }) {
-    ev.preventDefault()
+  const [email, setEmail] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
+  const [redirect, setRedirect] = useState<boolean>(false);
+
+  const context = useContext(UserContext);
+
+  // Ensure context is defined and type cast it
+  if (!context) {
+    throw new Error("UserContext must be used within a UserContextProvider");
+  }
+
+  const { setUser } = context as UserContextType;
+
+  async function handleLoginSubmit(ev: React.FormEvent<HTMLFormElement>) {
+    ev.preventDefault();
     try {
-      const {data} = await axios.post('/login', { email, password })
-      setUser(data)
-      alert('Login successful')
-      setRedirect(true)
+      const { data } = await axios.post('/login', { email, password });
+      setUser(data);
+      alert('Login successful');
+      setRedirect(true);
     } catch (e) {
-      alert('Login failed')
+      alert('Login failed');
     }
   }
 
   if (redirect) {
-    return <Navigate to={'/'} />
+    return <Navigate to={'/'} />;
   }
 
   return (
@@ -41,12 +48,12 @@ export default function LoginPage() {
             placeholder="password"
             value={password}
             onChange={e => setPassword(e.target.value)} />
-          <button className="primary">Login</button>
+          <button className="primary font-bold">Sign In</button>
           <div className="text-center py-2 text-gray-500">
-            Don't have an account yet? <Link className=" text-green-500" to={'/register'}>Register now</Link>
+            Don't have an account yet? <Link className=" text-green-500 font-bold" to={'/register'}>Register now</Link>
           </div>
         </form>
       </div>
     </div>
-  )
+  );
 }

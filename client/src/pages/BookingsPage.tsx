@@ -5,19 +5,39 @@ import PlaceImg from '../PlaceImg';
 import { Link } from "react-router-dom";
 import BookingDates from "../BookingDates";
 
+// Define types for Place and Booking
+interface Place {
+  title: string;
+  photos: string[];
+}
+
+interface Booking {
+  _id: string;
+  place: Place;
+  price: number;
+  checkIn: string; // Assuming checkIn is a date string
+  checkOut: string; // Assuming checkOut is a date string
+}
+
 export default function BookingsPage() {
-  const [bookings, setBookings] = useState([])
+  const [bookings, setBookings] = useState<Booking[]>([]);
+
   useEffect(() => {
     axios.get('/bookings').then(response => {
-      setBookings(response.data)
-    })
-  }, [])
+      setBookings(response.data);
+    });
+  }, []);
+
   return (
     <div>
       <AccountNav />
       <div>
-        {bookings?.length > 0 && bookings.map(booking => (
-          <Link to={`/account/bookings/${booking._id}`} className="flex gap-4 my-4 bg-gray-200 rounded-2xl overflow-hidden">
+        {bookings.length > 0 && bookings.map(booking => (
+          <Link
+            to={`/account/bookings/${booking._id}`}
+            className="flex gap-4 my-4 bg-gray-200 rounded-2xl overflow-hidden"
+            key={booking._id}
+          >
             <div className="w-64">
               <PlaceImg place={booking.place} />
             </div>
@@ -39,5 +59,5 @@ export default function BookingsPage() {
         ))}
       </div>
     </div>
-  )
+  );
 }

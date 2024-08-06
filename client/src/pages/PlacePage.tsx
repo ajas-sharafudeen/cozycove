@@ -1,24 +1,37 @@
 import axios from "axios";
-import { useEffect, useState } from "react"
-import { useParams } from "react-router"
+import { useEffect, useState } from "react";
+import { useParams } from "react-router";
 import BookingWidget from "../BookingWidget";
 import PlaceGallery from "../PlaceGallery";
 import AddressLink from "../AddressLink";
 
+interface Place {
+  _id: string;
+  title: string;
+  address: string;
+  description: string;
+  checkIn: string;
+  checkOut: string;
+  maxGuests: number;
+  extraInfo: string;
+  photos?: string[]; 
+  price: number;
+}
+
 export default function PlacePage() {
-  const { id } = useParams()
-  const [place, setPlace] = useState(null)
+  const { id } = useParams<{ id: string }>();
+  const [place, setPlace] = useState<Place | null>(null);
 
   useEffect(() => {
     if (!id) {
       return;
     }
     axios.get(`/places/${id}`).then(response => {
-      setPlace(response.data)
-    })
-  }, [id])
+      setPlace(response.data);
+    });
+  }, [id]);
 
-  if (!place) return ''
+  if (!place) return null;
 
   return (
     <div className="mt-4 -mx-8 px-8 pt-8 text-white">
@@ -46,7 +59,5 @@ export default function PlacePage() {
       </div>
       <div className="mb-4 mt-2 text-lg text-white leading-5">{place.extraInfo}</div>
     </div>
-  )
+  );
 }
-
-

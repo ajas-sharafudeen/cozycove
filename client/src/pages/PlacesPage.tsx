@@ -4,13 +4,30 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import PlaceImg from "../PlaceImg";
 
+// Define types for place
+interface Place {
+  _id: string;
+  title: string;
+  address: string;
+  description: string;
+  checkIn: string;
+  checkOut: string;
+  maxGuests: number;
+  extraInfo: string;
+  photos: string[]; // Required
+  price: number; // Ensure to include price if required by the data
+  // Add other properties as needed
+}
+
 export default function PlacesPage() {
-  const [places, setPlaces] = useState([])
+  const [places, setPlaces] = useState<Place[]>([]);
+
   useEffect(() => {
     axios.get('/user-places').then(({ data }) => {
-      setPlaces(data)
-    })
-  }, [])
+      setPlaces(data);
+    });
+  }, []);
+
   return (
     <div>
       <AccountNav />
@@ -24,7 +41,11 @@ export default function PlacesPage() {
       </div>
       <div className="mt-4">
         {places.length > 0 && places.map(place => (
-          <Link to={'/account/places/' + place._id} className="flex cursor-pointer gap-4 my-4 bg-gray-100 p-4 rounded-2xl">
+          <Link
+            key={place._id}
+            to={`/account/places/${place._id}`}
+            className="flex cursor-pointer gap-4 my-4 bg-gray-100 p-4 rounded-2xl"
+          >
             <div className="flex w-32 h-32 bg-gray-300 shrink-0">
               <PlaceImg place={place} />
             </div>
@@ -36,5 +57,5 @@ export default function PlacesPage() {
         ))}
       </div>
     </div>
-  )
+  );
 }

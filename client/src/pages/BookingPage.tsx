@@ -1,27 +1,43 @@
-import axios from "axios"
-import { useEffect, useState } from "react"
-import { useParams } from "react-router"
-import AddressLink from "../AddressLink"
-import PlaceGallery from "../PlaceGallery"
-import BookingDates from "../BookingDates"
+import axios from "axios";
+import { useEffect, useState } from "react";
+import { useParams } from "react-router";
+import AddressLink from "../AddressLink";
+import PlaceGallery from "../PlaceGallery";
+import BookingDates from "../BookingDates";
+
+interface Place {
+  title: string;
+  address: string;
+  photos: string[];
+}
+
+interface Booking {
+  _id: string;
+  place: Place;
+  price: number;
+  checkIn: string;
+  checkOut: string;
+}
 
 export default function BookingPage() {
-  const { id } = useParams()
-  const [booking, setBooking] = useState(null)
+  const { id } = useParams<{ id: string }>();
+  const [booking, setBooking] = useState<Booking | null>(null);
+
   useEffect(() => {
     if (id) {
       axios.get('/bookings').then(response => {
-        const foundBooking = response.data.find(({ _id }) => _id === id)
+        const foundBooking = response.data.find(({ _id }: Booking) => _id === id);
         if (foundBooking) {
-          setBooking(foundBooking)
+          setBooking(foundBooking);
         }
-      })
+      });
     }
-  }, [id])
+  }, [id]);
 
   if (!booking) {
-    return ''
+    return null;
   }
+
   return (
     <div className="my-8">
       <h1 className="text-3xl text-white">{booking.place.title}</h1>
@@ -38,5 +54,5 @@ export default function BookingPage() {
       </div>
       <PlaceGallery place={booking.place} />
     </div>
-  )
+  );
 }

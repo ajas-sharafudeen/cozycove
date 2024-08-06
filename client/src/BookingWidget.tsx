@@ -4,39 +4,53 @@ import { useContext, useEffect, useState } from "react"
 import { Navigate } from "react-router"
 import { UserContext } from "./UserContext"
 
-export default function BookingWidget({ place }) {
-  const [checkIn, setCheckIn] = useState('')
-  const [checkOut, setCheckOut] = useState('')
-  const [numberOfGuests, setNumberOfGuests] = useState(1)
-  const [name, setName] = useState('')
-  const [phone, setPhone] = useState('')
-  const [redirect, setRedirect] = useState('')
-  const { user } = useContext(UserContext)
+type BookingWidgetProps = {
+  place: {
+    _id: string;
+    price: number;
+  };
+};
+
+export default function BookingWidget({ place }: BookingWidgetProps) {
+  const [checkIn, setCheckIn] = useState<string>('');
+  const [checkOut, setCheckOut] = useState<string>('');
+  const [numberOfGuests, setNumberOfGuests] = useState<number>(1);
+  const [name, setName] = useState<string>('');
+  const [phone, setPhone] = useState<string>('');
+  const [redirect, setRedirect] = useState<string | null>(null);
+  const { user } = useContext(UserContext);
 
   useEffect(() => {
     if (user) {
-      setName(user.name)
+      setName(user.name);
     }
-  }, [user])
+  }, [user]);
 
-
-  let numberOfNights = 0
+  let numberOfNights = 0;
   if (checkIn && checkOut) {
-    numberOfNights = differenceInCalendarDays(new Date(checkOut), new Date(checkIn))
+    numberOfNights = differenceInCalendarDays(new Date(checkOut), new Date(checkIn));
   }
 
   async function bookThisPlace() {
-    const response = await axios.post('/bookings', {
-      checkIn, checkOut, numberOfGuests, name, phone,
-      place: place._id,
-      price: numberOfNights * place.price
-    })
-    const bookingId = response.data._id
-    setRedirect(`/account/bookings/${bookingId}`)
+    try {
+      const response = await axios.post('/bookings', {
+        checkIn,
+        checkOut,
+        numberOfGuests,
+        name,
+        phone,
+        place: place._id,
+        price: numberOfNights * place.price
+      });
+      const bookingId = response.data._id;
+      setRedirect(`/account/bookings/${bookingId}`);
+    } catch (error) {
+      console.error("Error booking the place:", error);
+      // Handle error appropriately (e.g., show error message to the user)
+    }
   }
-
   if (redirect) {
-    return <Navigate to={redirect} />
+    return <Navigate to={redirect} />;
   }
 
   return (
@@ -48,34 +62,45 @@ export default function BookingWidget({ place }) {
         <div className="flex">
           <div className="px-4 py-3">
             <label>Check in: </label>
-            <input type="date"
+            <input
+              type="date"
               value={checkIn}
-              onChange={ev => setCheckIn(ev.target.value)} />
+              onChange={ev => setCheckIn(ev.target.value)}
+            />
           </div>
           <div className="px-4 py-3 border-l">
             <label>Check out: </label>
-            <input type="date"
+            <input
+              type="date"
               value={checkOut}
-              onChange={ev => setCheckOut(ev.target.value)} />
+              onChange={ev => setCheckOut(ev.target.value)}
+            />
           </div>
         </div>
         <div>
           <div className="px-4 py-3 border-t">
             <label>Number of guests:</label>
-            <input type="number"
+            <input
+              type="number"
               value={numberOfGuests}
-              onChange={ev => setNumberOfGuests(ev.target.value)} />
+              onChange={ev => setNumberOfGuests(Number(ev.target.value))}
+              min="1"
+            />
           </div>
           {numberOfNights > 0 && (
             <div className="px-4 py-3 border-t">
               <label>Your full name:</label>
-              <input type="text"
+              <input
+                type="text"
                 value={name}
-                onChange={ev => setName(ev.target.value)} />
+                onChange={ev => setName(ev.target.value)}
+              />
               <label>Phone number:</label>
-              <input type="tel"
+              <input
+                type="tel"
                 value={phone}
-                onChange={ev => setPhone(ev.target.value)} />
+                onChange={ev => setPhone(ev.target.value)}
+              />
             </div>
           )}
         </div>
@@ -83,11 +108,9 @@ export default function BookingWidget({ place }) {
       <button onClick={bookThisPlace} className="primary mt-4">
         Book Now
         {numberOfNights > 0 && (
-          <>
-            <span> &#8377;{numberOfNights * place.price}</span>
-          </>
+          <span> &#8377; {numberOfNights * place.price}</span>
         )}
       </button>
     </div>
-  )
+  );
 }

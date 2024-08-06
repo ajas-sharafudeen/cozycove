@@ -1,24 +1,39 @@
 import axios from "axios";
-import { createContext, useEffect, useState } from "react";
+import { createContext, useEffect, useState, ReactNode } from "react";
 
-export const UserContext = createContext({})
+interface User {
+  name: string;
+  email: string;
+}
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-export function UserContextProvider({ children }) {
-  const [user, setUser] = useState(null)
-  const [ready, setReady] = useState(false)
+export interface UserContextType {
+  user: User | null;
+  setUser: React.Dispatch<React.SetStateAction<User | null>>;
+  ready: boolean;
+}
+
+export const UserContext = createContext<UserContextType | undefined>(undefined);
+
+interface UserContextProviderProps {
+  children: ReactNode;
+}
+
+export function UserContextProvider({ children }: UserContextProviderProps) {
+  const [user, setUser] = useState<User | null>(null);
+  const [ready, setReady] = useState(false);
+
   useEffect(() => {
-    if (!user) {
-      axios.get('/profile').then(({ data }) => {
-        setUser(data)
-        setReady(true)
-      })
-    }
-  }, [])
+    axios.get('/profile').then(({ data }) => {
+      setUser(data);
+      setReady(true);
+    }).catch(() => {
+      setReady(true);
+    });
+  }, []);
+
   return (
     <UserContext.Provider value={{ user, setUser, ready }}>
       {children}
     </UserContext.Provider>
-  )
+  );
 }
