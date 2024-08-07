@@ -3,7 +3,7 @@ import PhotosUploader from "../PhotosUploader";
 import Perks from "../Perks";
 import AccountNav from "../AccountNav";
 import axios from "axios";
-import { Navigate, useParams } from "react-router";
+import { Navigate, useParams } from "react-router-dom";
 
 // Define types for the state variables
 export interface PlacePayload {
@@ -110,7 +110,7 @@ export default function PlacesFormPage() {
     <div>
       <AccountNav />
       <form onSubmit={savePlace}>
-        {preInput('Title', 'Title for your place, should be short and catchy as in advertisement')}
+        {preInput('Title', 'Title for your place. should be short and catchy as in advertisement')}
         <input
           type="text"
           value={title}
