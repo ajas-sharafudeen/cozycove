@@ -41,7 +41,7 @@ export default function PlacePage() {
       <div className="mt-8 mb-8 text-xl grid gap-8 grid-cols-1 md:grid-cols-[2fr_1fr]">
         <div>
           <div className="my-4">
-            <h2 className="my-4 font-semibold text-2xl">Description</h2>
+            <h2 className="mb-4 font-semibold text-2xl">Description</h2>
             {place.description}
           </div>
           Check-in: {place.checkIn}<br />
@@ -57,7 +57,7 @@ export default function PlacePage() {
           <h2 className="font-semibold text-2xl text-white">Extra Information</h2>
         </div>
       </div>
-      <div className="mb-4 mt-2 text-lg text-white leading-5">{place.extraInfo}</div>
+      <div className="mb-4 text-lg text-white leading-5">{place.extraInfo}</div>
     </div>
   );
 }
