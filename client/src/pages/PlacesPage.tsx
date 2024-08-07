@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import PlaceImg from "../PlaceImg";
 
-// Define types for place
 interface Place {
   _id: string;
   title: string;
@@ -14,9 +13,8 @@ interface Place {
   checkOut: string;
   maxGuests: number;
   extraInfo: string;
-  photos: string[]; // Required
-  price: number; // Ensure to include price if required by the data
-  // Add other properties as needed
+  photos: string[];
+  price: number;
 }
 
 export default function PlacesPage() {
