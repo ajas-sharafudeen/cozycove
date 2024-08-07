@@ -77,8 +77,8 @@ app.post('/login', async (req, res) => {
   }
 });
 
-app.get('/profile', async (req, res) => {
-  mongoose.connect(process.env.MONGO_URL);
+app.get('/profile', (req, res) => {
+  mongoose.connect(process.env.MONGO_URL); // Added code until here
   const { token } = req.cookies;
   if (token) {
     jwt.verify(token, jwtSecret, async (err, userData) => {
