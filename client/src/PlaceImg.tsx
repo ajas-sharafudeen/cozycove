@@ -1,3 +1,5 @@
+import Image from "./Image"
+
 interface Place {
   photos: string[];
 }
@@ -19,9 +21,6 @@ export default function PlaceImg({ place, index = 0, className = null }: PlaceIm
   }
 
   return (
-    <img
-      className={className}
-      src={'http://localhost:4000/uploads/' + place.photos[index]}
-    />
+    <Image className={className} src={place.photos[index]} alt=""/>
   );
 }
