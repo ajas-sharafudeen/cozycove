@@ -33,7 +33,7 @@ app.use('/uploads', express.static(__dirname + '/uploads'));
 //   origin: 'http://127.0.0.1:5173',
 // }));
 app.use(cors({
-  origin: 'https://cozycove.onrender.com',
+  origin: 'https://cozycove-iota.vercel.app',
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   credentials: true,
 }));
