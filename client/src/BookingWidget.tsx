@@ -1,7 +1,7 @@
 import axios from "axios"
 import { differenceInCalendarDays } from "date-fns"
 import { useContext, useEffect, useState } from "react"
-import { Navigate } from "react-router"
+import { Navigate } from "react-router-dom"
 import { UserContext } from "./UserContext"
 
 type BookingWidgetProps = {
@@ -46,7 +46,6 @@ export default function BookingWidget({ place }: BookingWidgetProps) {
       setRedirect(`/account/bookings/${bookingId}`);
     } catch (error) {
       console.error("Error booking the place:", error);
-      // Handle error appropriately (e.g., show error message to the user)
     }
   }
   if (redirect) {
