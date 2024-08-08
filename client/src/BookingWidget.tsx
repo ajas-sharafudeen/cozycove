@@ -18,13 +18,13 @@ export default function BookingWidget({ place }: BookingWidgetProps) {
   const [name, setName] = useState<string>('');
   const [phone, setPhone] = useState<string>('');
   const [redirect, setRedirect] = useState<string | null>(null);
-  const { user } = useContext(UserContext);
+  const userContext = useContext(UserContext);
 
   useEffect(() => {
-    if (user) {
-      setName(user.name);
+    if (userContext?.user) {
+      setName(userContext.user.name);
     }
-  }, [user]);
+  }, [userContext]);
 
   let numberOfNights = 0;
   if (checkIn && checkOut) {
