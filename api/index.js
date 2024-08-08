@@ -10,13 +10,20 @@ const cookieParser = require('cookie-parser');
 const imageDownloader = require('image-downloader');
 const multer = require('multer');
 const fs = require('fs');
+const cloudinary = require('cloudinary').v2;
 
 require('dotenv').config();
-
 const app = express();
+
+// Configure Cloudinary
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET
+});
 const bcryptSalt = bcrypt.genSaltSync(10);
 const jwtSecret = 'hwsrdfserwwdf36g';
-
+mongoose.connect(process.env.MONGO_URL);
 app.use(express.json());
 app.use(cookieParser());
 app.use('/uploads', express.static(__dirname + '/uploads'));
@@ -24,8 +31,6 @@ app.use(cors({
   credentials: true,
   origin: 'http://127.0.0.1:5173',
 }));
-
-mongoose.connect(process.env.MONGO_URL);
 
 function getUserDataFromReq(req) {
   return new Promise((resolve, reject) => {
@@ -37,12 +42,10 @@ function getUserDataFromReq(req) {
 }
 
 app.get('/test', (req, res) => {
-  mongoose.connect(process.env.MONGO_URL);
   res.json('test successful');
 });
 
 app.post('/register', async (req, res) => {
-  mongoose.connect(process.env.MONGO_URL);
   const { name, email, password } = req.body;
   try {
     const userDoc = await User.create({
@@ -78,7 +81,6 @@ app.post('/login', async (req, res) => {
 });
 
 app.get('/profile', (req, res) => {
-  mongoose.connect(process.env.MONGO_URL);
   const { token } = req.cookies;
   if (token) {
     jwt.verify(token, jwtSecret, async (err, userData) => {
@@ -102,71 +104,101 @@ app.post('/logout', (req, res) => {
 app.post('/upload-by-link', async (req, res) => {
   const { link } = req.body;
   const newName = 'photo' + Date.now() + '.jpg';
+  const tempPath = '/tmp/' + newName;
   try {
+
+    // Download the image to a temporary location
     await imageDownloader.image({
       url: link,
-      dest: __dirname + '/uploads/' + newName
+      dest: tempPath
     });
-    res.json(newName);
-  } catch (e) {
-    res.status(500).json('Failed to download image');
+
+    // Upload the downloaded image to Cloudinary
+    const result = await cloudinary.uploader
+      .upload(tempPath, {
+        resource_type: 'auto',
+        public_id: `booking-app/${newName}`,
+        overwrite: true,
+      });
+    console.log(tempPath);
+    // Delete the temporary file
+    fs.unlinkSync(tempPath);
+    // Return the Cloudinary URL of the uploaded image
+    res.json(result.secure_url);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json('Failed to download or upload image using link');
   }
 });
 
-const photosMiddleware = multer({ dest: 'uploads/' });
-app.post('/upload', photosMiddleware.array('photos', 100), (req, res) => {
+const photosMiddleware = multer({ dest: '/tmp' })
+app.post('/upload', photosMiddleware.array('photos', 100), async (req, res) => {
   const uploadedFiles = [];
-  for (let i = 0; i < req.files.length; i++) {
-    const { path, originalname } = req.files[i];
-    const parts = originalname.split('.');
-    const ext = parts[parts.length - 1];
-    const newPath = path + '.' + ext;
-    fs.renameSync(path, newPath);
-    uploadedFiles.push(newPath.replace('uploads/', ''));
+  try {
+    for (let i = 0; i < req.files.length; i++) {
+      const { path, originalname } = req.files[i];
+
+      // Upload each file to Cloudinary
+      const result = await cloudinary.uploader
+        .upload(path, {
+          resource_type: 'auto',
+          public_id: `booking-app/${originalname}`,
+          overwrite: true,
+        });
+
+      // Add the URL to the list of uploaded files
+      uploadedFiles.push(result.secure_url);
+
+      // Delete the temporary file
+      fs.unlinkSync(path);
+    }
+
+    // Respond with the list of uploaded file URLs
+    res.json(uploadedFiles);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Failed to upload images from device' });
   }
-  res.json(uploadedFiles);
 });
 
-app.post('/places', async (req, res) => {
+app.post('/places', (req, res) => {
   const { token } = req.cookies;
   const {
     title, address, photos,
     description, perks, extraInfo,
     checkIn, checkOut, maxGuests, price
   } = req.body;
-  try {
-    const userData = await getUserDataFromReq(req);
-    const placeDoc = await Place.create({
-      owner: userData.id,
-      title, address, photos,
-      description, perks, extraInfo,
-      checkIn, checkOut, maxGuests, price,
-    });
-    res.json(placeDoc);
-  } catch (e) {
-    res.status(500).json('Failed to create place');
-  }
+  // new code
+  jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+    if (err) throw err;
+    try {
+      // const userData = await getUserDataFromReq(req);
+      const placeDoc = await Place.create({
+        owner: userData.id,
+        title, address, photos,
+        description, perks, extraInfo,
+        checkIn, checkOut, maxGuests, price,
+      });
+      res.json(placeDoc);
+    } catch (e) {
+      res.status(500).json('Failed to create place');
+    }
+  })
 });
 
-app.get('/user-places', async (req, res) => {
+app.get('/user-places', (req, res) => {
   const { token } = req.cookies;
-  try {
-    const userData = await getUserDataFromReq(req);
-    const places = await Place.find({ owner: userData.id });
-    res.json(places);
-  } catch (e) {
-    res.status(500).json('Failed to fetch user places');
-  }
+  // new code
+  jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+    if (err) throw err
+    const { id } = userData;
+    res.json(await Place.find({ owner: id }));
+  });
 });
 
 app.get('/places/:id', async (req, res) => {
   const { id } = req.params;
-  try {
-    const place = await Place.findById(id);
-    res.json(place);
-  } catch (e) {
-    res.status(500).json('Failed to fetch place');
-  }
+  res.json(await Place.findById(id));
 });
 
 app.put('/places', async (req, res) => {
@@ -176,25 +208,18 @@ app.put('/places', async (req, res) => {
     description, perks, extraInfo,
     checkIn, checkOut, maxGuests, price
   } = req.body;
-
-
-  try {
-    const userData = await getUserDataFromReq(req);
+  jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+    if (err) throw err;
     const placeDoc = await Place.findById(id);
     if (userData.id === placeDoc.owner.toString()) {
       placeDoc.set({
-        title, address, photos,
-        description, perks, extraInfo,
-        checkIn, checkOut, maxGuests, price,
+        title, address, photos, description,
+        perks, extraInfo, checkIn, checkOut, maxGuests, price,
       });
       await placeDoc.save();
       res.json('ok');
-    } else {
-      res.status(403).json('Unauthorized');
     }
-  } catch (e) {
-    res.status(500).json('Failed to update place');
-  }
+  });
 });
 
 app.get('/places', async (req, res) => {
@@ -207,20 +232,19 @@ app.get('/places', async (req, res) => {
 });
 
 app.post('/bookings', async (req, res) => {
-  try {
-    const userData = await getUserDataFromReq(req);
-    const {
-      place, checkIn, checkOut, numberOfGuests,
-      name, phone, price
-    } = req.body;
-    const booking = await Booking.create({
-      place, checkIn, checkOut, numberOfGuests,
-      name, phone, price, user: userData.id
-    });
-    res.json(booking);
-  } catch (e) {
-    res.status(500).json('Failed to create booking');
-  }
+  mongoose.connect(process.env.MONGO_URL);
+  const userData = await getUserDataFromReq(req);
+  const {
+    place, checkIn, checkOut, numberOfGuests, name, phone, price,
+  } = req.body;
+  Booking.create({
+    place, checkIn, checkOut, numberOfGuests, name, phone, price,
+    user: userData.id,
+  }).then((doc) => {
+    res.json(doc);
+  }).catch((err) => {
+    throw err;
+  });
 });
 
 app.get('/bookings', async (req, res) => {
