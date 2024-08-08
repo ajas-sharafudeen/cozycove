@@ -11,6 +11,7 @@ const imageDownloader = require('image-downloader');
 const multer = require('multer');
 const fs = require('fs');
 const cloudinary = require('cloudinary').v2;
+const port = process.env.PORT || 4000;
 
 require('dotenv').config();
 const app = express();
@@ -257,6 +258,6 @@ app.get('/bookings', async (req, res) => {
   }
 });
 
-app.listen(4000, () => {
+app.listen(port, () => {
   console.log('Server is running on port 4000');
 });
