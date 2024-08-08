@@ -14,7 +14,6 @@ interface Place {
 
 export default function IndexPage() {
   const [places, setPlaces] = useState<Place[]>([]);
-
   useEffect(() => {
     axios.get('/places').then(response => {
       setPlaces(response.data);
