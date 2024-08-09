@@ -32,7 +32,7 @@ export default function BookingsPage() {
     <div>
       <AccountNav />
       <div>
-        {bookings.length > 0 && bookings.map(booking => (
+        {bookings?.length > 0 && bookings.map(booking => (
           <Link
             to={`/account/bookings/${booking._id}`}
             className="flex gap-4 my-4 bg-gray-200 rounded-2xl overflow-hidden"
