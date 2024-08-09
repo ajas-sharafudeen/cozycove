@@ -20,7 +20,7 @@ export default function AccountNav() {
 
   return (
     <nav className="w-full flex justify-center mt-8 gap-2 mb-8 font-bold">
-      <Link className={linkClasses("profile")} to="/account">
+      <Link className={linkClasses('profile')} to={'/account'}>
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
@@ -38,7 +38,7 @@ export default function AccountNav() {
         </svg>
         My profile
       </Link>
-      <Link className={linkClasses("bookings")} to="/account/bookings">
+      <Link className={linkClasses('bookings')} to={'/account/bookings'}>
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
@@ -56,7 +56,7 @@ export default function AccountNav() {
         </svg>
         My bookings
       </Link>
-      <Link className={linkClasses("places")} to="/account/places">
+      <Link className={linkClasses('places')} to={'/account/places'}>
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
