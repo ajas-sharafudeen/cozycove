@@ -40,7 +40,7 @@ app.use(cors({
 
 function getUserDataFromReq(req) {
   return new Promise((resolve, reject) => {
-    jwt.verify(req.cookies.token, jwtSecret, (err, userData) => {
+    jwt.verify(req.cookies.token, jwtSecret, {}, async (err, userData) => {
       if (err) return reject(err);
       resolve(userData);
     });
@@ -89,7 +89,7 @@ app.post('/login', async (req, res) => {
 app.get('/profile', (req, res) => {
   const { token } = req.cookies;
   if (token) {
-    jwt.verify(token, jwtSecret, async (err, userData) => {
+    jwt.verify(token, jwtSecret, {}, async (err, userData) => {
       if (err) return res.status(401).json('Unauthorized');
       try {
         const { name, email, _id } = await User.findById(userData.id);
@@ -126,7 +126,6 @@ app.post('/upload-by-link', async (req, res) => {
         public_id: `booking-app/${newName}`,
         overwrite: true,
       });
-    console.log(tempPath);
     // Delete the temporary file
     fs.unlinkSync(tempPath);
     // Return the Cloudinary URL of the uploaded image
@@ -178,7 +177,6 @@ app.post('/places', (req, res) => {
   jwt.verify(token, jwtSecret, {}, async (err, userData) => {
     if (err) throw err;
     try {
-      // const userData = await getUserDataFromReq(req);
       const placeDoc = await Place.create({
         owner: userData.id,
         title, address, photos,
