@@ -190,7 +190,7 @@ app.post('/places', (req, res) => {
   })
 });
 
-app.get('/user-places', (req, res) => {
+app.get('/userplaces', (req, res) => {
   const { token } = req.cookies;
   // new code
   jwt.verify(token, jwtSecret, {}, async (err, userData) => {
