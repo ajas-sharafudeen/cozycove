@@ -10,7 +10,6 @@ export default function LoginPage() {
 
   const context = useContext(UserContext);
 
-  // Ensure context is defined and type cast it
   if (!context) {
     throw new Error("UserContext must be used within a UserContextProvider");
   }
@@ -25,6 +24,7 @@ export default function LoginPage() {
       alert('Login successful');
       setRedirect(true);
     } catch (e) {
+      console.log(e)
       alert('Login failed');
     }
   }
