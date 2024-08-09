@@ -24,10 +24,11 @@ cloudinary.config({
 });
 const bcryptSalt = bcrypt.genSaltSync(10);
 const jwtSecret = 'hwsrdfserwwdf36g';
+
+//Connect to Mongodb
 mongoose.connect(process.env.MONGO_URL);
+
 app.use(express.json());
-app.use(cookieParser());
-app.use('/uploads', express.static(__dirname + '/uploads'));
 // app.use(cors({
 //   credentials: true,
 //   origin: 'http://127.0.0.1:5173',
@@ -37,6 +38,8 @@ app.use(cors({
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   credentials: true,
 }));
+app.use(cookieParser());
+app.use('/uploads', express.static(__dirname + '/uploads'));
 
 function getUserDataFromReq(req) {
   return new Promise((resolve, reject) => {
