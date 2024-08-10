@@ -23,13 +23,13 @@ export function UserContextProvider({ children }: UserContextProviderProps) {
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    axios.get('/profile').then(({ data }) => {
-      setUser(data);
-      setReady(true);
-    }).catch(() => {
-      setReady(true);
-    });
-  }, []);
+    if (!user) {
+      axios.get('/profile').then(({ data }) => {
+        setUser(data);
+        setReady(true);
+      });
+    }
+  }, [user]);
 
   return (
     <UserContext.Provider value={{ user, setUser, ready }}>

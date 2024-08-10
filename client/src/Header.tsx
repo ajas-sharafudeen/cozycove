@@ -9,7 +9,7 @@ export default function Header() {
   return (
     <div>
       <header className='flex justify-between items-center p-4'>
-        <Link to='/' className='flex items-center'>
+        <Link to={'/'} className='flex items-center'>
           <div className="text-white">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="size-12">
               <path strokeLinecap="round" strokeLinejoin="round" d="M15.362 5.214A8.252 8.252 0 0 1 12 21 8.25 8.25 0 0 1 6.038 7.047 8.287 8.287 0 0 0 9 9.601a8.983 8.983 0 0 1 3.361-6.867 8.21 8.21 0 0 0 3 2.48Z" />
@@ -27,7 +27,7 @@ export default function Header() {
               <path fillRule="evenodd" d="M7.5 6a4.5 4.5 0 1 1 9 0 4.5 4.5 0 0 1-9 0ZM3.751 20.105a8.25 8.25 0 0 1 16.498 0 .75.75 0 0 1-.437.695A18.683 18.683 0 0 1 12 22.5c-2.786 0-5.433-.608-7.812-1.7a.75.75 0 0 1-.437-.695Z" clipRule="evenodd" />
             </svg>
           </div>
-          {user && (
+          {!!user && (
             <div className="ml-2 text-black text-lg font-bold">
               {user.name}
             </div>
