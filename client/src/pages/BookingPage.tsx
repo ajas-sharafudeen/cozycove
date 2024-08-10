@@ -35,7 +35,7 @@ export default function BookingPage() {
   }, [id]);
 
   if (!booking) {
-    return null;
+    return '';
   }
 
   return (
