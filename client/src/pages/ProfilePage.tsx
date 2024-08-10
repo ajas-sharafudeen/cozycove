@@ -46,11 +46,11 @@ export default function ProfilePage() {
   return (
     <div>
       <AccountNav />
-      {subpage === 'profile' && user && (
+      {subpage === 'profile' && (
         <div className="h-24 text-center text-black bg-white rounded-md max-w-lg mx-auto">
           <div className="text-2xl py-2">
-            <div>Username: <span className="text-green-500">{user.name}</span></div>
-            <div>Email: <span className="text-green-500">{user.email}</span></div>
+            <div>Username: <span className="text-green-500">{user?.name}</span></div>
+            <div>Email: <span className="text-green-500">{user?.email}</span></div>
           </div>
           <button onClick={logout} className="warning max-w-xm font-semibold">Sign Out</button>
         </div>
