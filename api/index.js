@@ -23,7 +23,6 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET
 });
 const bcryptSalt = bcrypt.genSaltSync(10);
-const jwtSecret = 'hwsrdfserwwdf36g';
 mongoose.connect(process.env.MONGO_URL);
 app.use(express.json());
 app.use(cookieParser());
@@ -35,7 +34,7 @@ app.use(cors({
 
 function getUserDataFromReq(req) {
   return new Promise((resolve, reject) => {
-    jwt.verify(req.cookies.token, jwtSecret, (err, userData) => {
+    jwt.verify(req.cookies.token, process.env.ACCESS_TOKEN_SECRET, (err, userData) => {
       if (err) return reject(err);
       resolve(userData);
     });
@@ -69,7 +68,7 @@ app.post('/api/login', async (req, res) => {
       jwt.sign({
         email: userDoc.email,
         id: userDoc._id,
-      }, jwtSecret, {}, (err, token) => {
+      }, process.env.ACCESS_TOKEN_SECRET, {}, (err, token) => {
         if (err) return res.status(500).json('Failed to sign token');
         res.cookie('token', token).json(userDoc);
       });
@@ -84,7 +83,7 @@ app.post('/api/login', async (req, res) => {
 app.get('/api/profile', (req, res) => {
   const { token } = req.cookies;
   if (token) {
-    jwt.verify(token, jwtSecret, async (err, userData) => {
+    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, async (err, userData) => {
       if (err) return res.status(401).json('Unauthorized');
       try {
         const { name, email, _id } = await User.findById(userData.id);
@@ -170,7 +169,7 @@ app.post('/api/places', (req, res) => {
     checkIn, checkOut, maxGuests, price
   } = req.body;
   // new code
-  jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+  jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, {}, async (err, userData) => {
     if (err) throw err;
     try {
       // const userData = await getUserDataFromReq(req);
@@ -190,7 +189,7 @@ app.post('/api/places', (req, res) => {
 app.get('/api/user-places', (req, res) => {
   const { token } = req.cookies;
   // new code
-  jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+  jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, {}, async (err, userData) => {
     if (err) throw err
     const { id } = userData;
     res.json(await Place.find({ owner: id }));
@@ -209,7 +208,7 @@ app.put('/api/places', async (req, res) => {
     description, perks, extraInfo,
     checkIn, checkOut, maxGuests, price
   } = req.body;
-  jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+  jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, {}, async (err, userData) => {
     if (err) throw err;
     const placeDoc = await Place.findById(id);
     if (userData.id === placeDoc.owner.toString()) {
