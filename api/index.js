@@ -231,6 +231,23 @@ app.get('/api/places', async (req, res) => {
   }
 });
 
+app.delete('/api/places/:id', (req, res) => {
+  const { token } = req.cookies;
+  jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, {}, async (err, userData) => {
+    if (err) {
+      return res.status(403).json('Invalid token');
+    }
+    try {
+      const placeId = req.params.id;
+      await Place.findByIdAndDelete(placeId);
+      res.json('Place deleted successfully!');
+    } catch (e) {
+      res.status(500).json('Failed to delete place!');
+    }
+  });
+});
+
+
 app.post('/api/bookings', async (req, res) => {
   mongoose.connect(process.env.MONGO_URL);
   const userData = await getUserDataFromReq(req);
