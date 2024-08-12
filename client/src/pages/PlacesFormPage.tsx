@@ -42,19 +42,24 @@ export default function PlacesFormPage() {
       return;
     }
     axios.get(`/places/${id}`).then(response => {
-      const data: PlacePayload = response.data;
-      setTitle(data.title);
-      setAddress(data.address);
-      setAddedPhotos(data.photos);
-      setDescription(data.description);
-      setPerks(data.perks);
-      setExtraInfo(data.extraInfo);
-      setCheckIn(data.checkIn);
-      setCheckOut(data.checkOut);
-      setMaxGuests(data.maxGuests);
-      setPrice(data.price);
+      const data: PlacePayload | null = response.data;
+      if (data) {
+        setTitle(data.title);
+        setAddress(data.address);
+        setAddedPhotos(data.photos);
+        setDescription(data.description);
+        setPerks(data.perks);
+        setExtraInfo(data.extraInfo);
+        setCheckIn(data.checkIn);
+        setCheckOut(data.checkOut);
+        setMaxGuests(data.maxGuests);
+        setPrice(data.price);
+      }
+    }).catch(error => {
+      console.error("Failed to fetch place data:", error);
     });
   }, [id]);
+  
 
   function inputHeader(text: string) {
     return (
